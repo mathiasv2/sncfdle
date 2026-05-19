@@ -1,0 +1,47 @@
+services:
+  game-database:
+    image: postgres:15
+    container_name: game-database
+    env_file:
+      - .env.docker.game
+    volumes:
+      - game-database:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - backend-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres_user -d postgres_game_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  game-service:
+    build: QuiSNCF/
+    container_name: game-service
+    env_file:
+      - .env.docker.game
+    networks:
+      - backend-net
+      - frontend-net
+    depends_on:
+      game-database:
+        condition: service_healthy
+
+  game-frontend:
+    build: ./frontend/
+    container_name: game-frontend
+    ports:
+      - "80:80"
+    networks:
+      - frontend-net
+    depends_on:
+      - game-service
+
+networks:
+  backend-net:
+    internal: true
+  frontend-net:
+
+volumes:
+  game-database:

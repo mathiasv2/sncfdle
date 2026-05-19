@@ -1,0 +1,6 @@
+[submodule "modules/back"]
+	path = modules/back
+	url = git@github.com:mathiasv2/QuiSNCF.back.git
+[submodule "modules/front"]
+	path = modules/front
+	url = git@github.com:mathiasv2/QuiSNCF.front.git
