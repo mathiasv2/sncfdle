@@ -20,9 +20,8 @@ jobs:
           key: ${{ secrets.PI_SSH_KEY }}
           port: ${{ secrets.PI_PORT }}
           script: |
-            cd ~/sncfdle/
+            cd ~/sncfdle
             git pull --rebase origin main
             git submodule update --remote --merge
-            docker compose down
             docker compose up --build -d
             docker image prune -f
