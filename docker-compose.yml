@@ -9,7 +9,7 @@ services:
     networks:
       - backend-net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres_user -d postgres_game_db"]
+      test: ["CMD-SHELL", "pg_isready -U postgres_user -d postgres_sncfdle_db"]
       interval: 10s
       timeout: 5s
       retries: 5
