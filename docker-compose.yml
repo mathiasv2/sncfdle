@@ -22,6 +22,8 @@ services:
     networks:
       - backend-net
       - frontend-net
+    environment:
+      - TZ=Europe/Paris
     depends_on:
       game-database:
         condition: service_healthy
