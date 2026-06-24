@@ -1,0 +1,45 @@
+name: Build, push and deploy to k3s
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./modules/back/QuiSNCF
+          push: true
+          tags: mathiasv2/sncfdle-backend:latest
+
+      - name: Build and push frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./modules/front
+          push: true
+          tags: mathiasv2/sncfdle-frontend:latest
+
+      - name: Restart deployments on k3s via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PI_HOST }}
+          username: ${{ secrets.PI_USER }}
+          key: ${{ secrets.PI_SSH_KEY }}
+          port: ${{ secrets.PI_PORT }}
+          script: |
+            kubectl rollout restart deployment game-service -n sncfdle
+            kubectl rollout restart deployment game-frontend -n sncfdle
+            kubectl rollout status deployment game-service -n sncfdle --timeout=120s
+            kubectl rollout status deployment game-frontend -n sncfdle --timeout=120s
