@@ -17,11 +17,18 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build and push backend
         uses: docker/build-push-action@v6
         with:
           context: ./modules/back/QuiSNCF
           push: true
+          platforms: linux/arm64
           tags: vonrothbart/sncfdle-backend:latest
 
       - name: Build and push frontend
@@ -29,8 +36,9 @@ jobs:
         with:
           context: ./modules/front
           push: true
+          platforms: linux/arm64
           tags: vonrothbart/sncfdle-frontend:latest
-
+          
       - name: Restart deployments on k3s via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
