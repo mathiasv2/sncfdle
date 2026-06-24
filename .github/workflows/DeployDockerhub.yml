@@ -22,14 +22,14 @@ jobs:
         with:
           context: ./modules/back/QuiSNCF
           push: true
-          tags: mathiasv2/sncfdle-backend:latest
+          tags: vonrothbart/sncfdle-backend:latest
 
       - name: Build and push frontend
         uses: docker/build-push-action@v6
         with:
           context: ./modules/front
           push: true
-          tags: mathiasv2/sncfdle-frontend:latest
+          tags: vonrothbart/sncfdle-frontend:latest
 
       - name: Restart deployments on k3s via SSH
         uses: appleboy/ssh-action@v1.0.3
